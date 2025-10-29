@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BEM Tabs Improved</title>
+  <style>
+    /* === БАЗОВЫЕ СБРОСЫ === */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* === БЛОК TABS === */
+    .tabs {
+      background: #fff;
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 750px;
+      width: 100%;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .tabs:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 35px 80px rgba(0, 0, 0, 0.3);
+    }
+
+    /* === НАВИГАЦИЯ === */
+    .tabs__nav {
+      display: flex;
+      justify-content: space-between;
+      background: #f9f9f9;
+      border-radius: 12px;
+      padding: 6px;
+      margin-bottom: 30px;
+      position: relative;
+      box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .tabs__btn {
+      flex: 1;
+      padding: 12px 10px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #555;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: color 0.3s ease, transform 0.25s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    .tabs__btn:hover {
+      color: #222;
+      transform: translateY(-2px);
+    }
+
+    .tabs__btn--active {
+      color: #000;
+      font-weight: 600;
+    }
+
+    /* === ИНДИКАТОР === */
+    .tabs__indicator {
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      left: 0;
+      height: calc(100% - 12px);
+      width: 0;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #ffd54f, #ffca28);
+      box-shadow: 0 4px 10px rgba(255, 213, 79, 0.5);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1;
+    }
+
+    /* === КОНТЕНТ === */
+    .tabs__content {
+      position: relative;
+      overflow: hidden;
+      min-height: 160px;
+    }
+
+    .tabs__pane {
+      opacity: 0;
+      transform: translateX(60px);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+    }
+
+    .tabs__pane--active {
+      opacity: 1;
+      transform: translateX(0);
+      position: relative;
+    }
+
+    /* === ТЕКСТ === */
+    p {
+      font-size: 18px;
+      color: #333;
+      line-height: 1.7;
+    }
+
+    /* === АДАПТИВНОСТЬ === */
+    @media (max-width: 600px) {
+      .tabs {
+        padding: 25px;
+      }
+
+      .tabs__btn {
+        font-size: 15px;
+        padding: 10px 6px;
+      }
+
+      p {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="tabs">
+    <div class="tabs__nav">
+      <button class="tabs__btn tabs__btn--active" data-tab="1">Описание</button>
+      <button class="tabs__btn" data-tab="2">Характеристики</button>
+      <button class="tabs__btn" data-tab="3">Отзывы</button>
+      <div class="tabs__indicator"></div>
+    </div>
+
+    <div class="tabs__content">
+      <div class="tabs__pane tabs__pane--active" data-tab="1">
+        <p>Это описание продукта. Здесь можно разместить текст о его особенностях и преимуществах.</p>
+      </div>
+      <div class="tabs__pane" data-tab="2">
+        <p>Характеристики: мощность — 200 Вт, вес — 1.2 кг, цвет — серебристый.</p>
+      </div>
+      <div class="tabs__pane" data-tab="3">
+        <p>Отзывы: “Отличное качество, рекомендую!” — Анна.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tabs = document.querySelector('.tabs');
+    const buttons = tabs.querySelectorAll('.tabs__btn');
+    const panes = tabs.querySelectorAll('.tabs__pane');
+    const indicator = tabs.querySelector('.tabs__indicator');
+
+    function activateTab(tabId) {
+      buttons.forEach(btn => btn.classList.remove('tabs__btn--active'));
+      panes.forEach(pane => pane.classList.remove('tabs__pane--active'));
+
+      const activeBtn = tabs.querySelector(`.tabs__btn[data-tab="${tabId}"]`);
+      const activePane = tabs.querySelector(`.tabs__pane[data-tab="${tabId}"]`);
+
+      activeBtn.classList.add('tabs__btn--active');
+      activePane.classList.add('tabs__pane--active');
+
+      // Анимация индикатора
+      const btnRect = activeBtn.getBoundingClientRect();
+      const navRect = activeBtn.parentElement.getBoundingClientRect();
+
+      indicator.style.width = `${btnRect.width}px`;
+      indicator.style.left = `${btnRect.left - navRect.left}px`;
+    }
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => activateTab(btn.dataset.tab));
+    });
+
+    window.addEventListener('load', () => activateTab('1'));
+  </script>
+
+</body>
+</html>
+
